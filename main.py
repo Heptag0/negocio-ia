@@ -8,6 +8,8 @@ def consultar(pregunta):
     if "SELECT" not in respuesta.upper():
         return respuesta
     resultado = ejecutar(respuesta)
+    resultado = resultado.round(2)
+    resultado.columns = resultado.columns.str.replace("_", " ").str.title()
     return resultado
 
 ## try:

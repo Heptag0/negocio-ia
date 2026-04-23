@@ -9,7 +9,7 @@ if st.button("Consultar"):
         if isinstance(respuesta, str):
             st.write(respuesta)
         else:
-            st.dataframe(respuesta)
+            st.dataframe(respuesta.reset_index(drop=True), hide_index=True)
     except Exception as e:
         st.write(f"No se ha podido realizar la consulta, error: {e}")
 else:
