@@ -1,5 +1,12 @@
 # Changelog
 
+## V2.1.0
+### Correcciones
+- None ya no aparece en pantalla cuando respuesta natural está desactivada
+- Corregido error index out of bounds en gráficos con una sola columna o fila
+- Gráfico de pastel ahora se activa correctamente con is_string_dtype
+- Sugerencias ya no se activan en respuestas conversacionales
+
 ## V2.0.0
 ### Nuevas Features
 - Reintento automático de consultas SQL con autocorrección de errores
