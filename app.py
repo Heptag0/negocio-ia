@@ -8,12 +8,14 @@ if st.button("Consultar"):
     with st.spinner("Analizando tu consulta..."):
         try:
             respuesta_natural, resultado = consultar(pregunta)
-            st.write(respuesta_natural)
+            if respuesta_natural is not None:
+                st.write(respuesta_natural)
             if resultado is not None:
                 st.dataframe(resultado.reset_index(drop=True), hide_index=True)
-                tipo_grafico = detectar_grafico(resultado)
-                grafico = generar_grafico(resultado, tipo_grafico)
-                st.plotly_chart(grafico)
+                if resultado.shape[0] > 0 and resultado.shape[1] >= 2:
+                    tipo_grafico = detectar_grafico(resultado)
+                    grafico = generar_grafico(resultado, tipo_grafico)
+                    st.plotly_chart(grafico)
         except Exception as e:
             st.write(f"No se ha podido realizar la consulta, error: {e}")
 else:

@@ -7,7 +7,9 @@ def consultar(pregunta):
     respuesta = generar.message.content
     respuesta = re.sub(r'<think>.*?</think>', '', respuesta, flags=re.DOTALL)
     respuesta = respuesta.strip().replace("```sql","").replace("```","").replace("'", "'").replace("'", "'").replace("%", "%%")
-    if "SELECT" not in respuesta.upper():
+    if "SELECT" not in respuesta.upper() and "esquema actual" not in respuesta.lower():
+        return respuesta, None
+    else:
         sugerencias = sugerencia(pregunta).message.content
         return f"No he podido responder esa consulta. Aquí tienes algunas preguntas similares que sí puedo responder:\n\n{sugerencias}", None
     try: 

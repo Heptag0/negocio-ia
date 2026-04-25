@@ -13,8 +13,8 @@ def detectar_grafico(df):
             tiene_fecha = True
         elif df[col].dtype == 'int64' or df[col].dtype == 'float64':
             tiene_numerico = True
-        elif df[col].dtype == 'object':
-            tiene_texto = True
+        elif pd.api.types.is_string_dtype(df[col]):
+            tiene_texto = True        
     if tiene_fecha:
         return "linea"
     elif tiene_texto and tiene_numerico and len(df) <= 6:
