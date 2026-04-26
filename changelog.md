@@ -1,5 +1,31 @@
 # Changelog
 
+## V2.2.0
+### Cambios de modelo
+- Migración de qwen2.5-coder:7b a deepseek-coder-v2:lite
+- Test exhaustivo de 6 modelos: sqlcoder, llama3-sqlcoder, yi-coder, deepseek, prem1b, qwen
+- deepseek-coder-v2:lite elegido por mejor balance velocidad/precisión
+
+### Nuevas Features
+- Botón "⚡ Respuesta rápida" — tabla y gráfico sin texto explicativo
+- Botón "🔍 Respuesta profunda" — texto explicativo + tabla + gráfico
+- Respuesta natural activada en modo profundo
+
+### Mejoras de prompt
+- Prompt optimizado de 19 a 18 reglas
+- Regla 19: fix HAVING vs WHERE para filtros de cantidad acumulada
+- Fix alucinación de productos (Peso, Pipad, Ballena Pacifico Amarilla)
+- Ejemplo de ventas por departamento agregado
+
+### Arquitectura futura definida
+- Perfil 8GB RAM: qwen2.5-coder:7b (4.7GB)
+- Perfil 16GB RAM: deepseek-coder-v2:lite (8.9GB)
+- Perfil 32GB+: qwen3:8b o superior
+- Plan VPS Linux con GPU para versión cloud
+
+### Archivos modificados
+- main.py, llm.py, app.py, prompt.py
+
 ## V2.1.0
 ### Correcciones
 - None ya no aparece en pantalla cuando respuesta natural está desactivada

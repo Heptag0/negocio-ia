@@ -5,7 +5,7 @@ from prompt import obtener_prompt
 instrucciones = obtener_prompt() + obtener_schema()
 
 def generar_sql(pregunta):
-    modelo = "qwen2.5-coder:7b"
+    modelo = "deepseek-coder-v2:lite"
     respuesta = ollama.chat(
         model = modelo,
         messages = [{
@@ -18,7 +18,7 @@ def generar_sql(pregunta):
     return respuesta
 
 def corregir_sql(pregunta, sql_fallido, error):
-    modelo = "qwen2.5-coder:7b"
+    modelo = "deepseek-coder-v2:lite"
     mensaje = f"""La siguiente consulta SQL ha generado un error.
     Pregunta original: {pregunta}
     Error: {error}
@@ -37,7 +37,7 @@ def corregir_sql(pregunta, sql_fallido, error):
     return respuesta
 
 def generar_respuesta_natural(pregunta, resultado):
-    modelo = "qwen2.5-coder:7b"
+    modelo = "deepseek-coder-v2:lite"
     respuesta = ollama.chat(
         model = modelo,
         messages = [{
@@ -50,13 +50,13 @@ def generar_respuesta_natural(pregunta, resultado):
     return respuesta
 
 def sugerencia(pregunta):
-    modelo = "qwen2.5-coder:7b"
+    modelo = "deepseek-coder-v2:lite"
     respuesta = ollama.chat(
         model = modelo,
         messages = [{
             "role": "system",
             "content": "Eres un asistente de negocio. Cuando una consulta no puede responderse, sugiere 2-3 preguntas alternativas similares que sí puedan responderse con datos de ventas, productos y departamentos."
-        },
+        },  
             {"role": "user",
             "content": f"Pregunta original: {pregunta}"}
             ]
