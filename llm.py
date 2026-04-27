@@ -2,71 +2,70 @@ import ollama
 from schema import obtener_schema
 from prompt import obtener_prompt
 
+# ── CONFIGURACIÓN ──────────────────────────────────────────────
+MODELO = "deepseek-coder-v2:lite"
 instrucciones = obtener_prompt() + obtener_schema()
 
+# ── GENERACIÓN DE SQL ──────────────────────────────────────────
 def generar_sql(pregunta):
-    modelo = "deepseek-coder-v2:lite"
-    respuesta = ollama.chat(
-        model = modelo,
-        messages = [{
-            "role": "system",
-            "content": instrucciones},
-            {"role": "user",
-            "content": pregunta
-            }
-        ]   )
-    return respuesta
-
-def corregir_sql(pregunta, sql_fallido, error):
-    modelo = "deepseek-coder-v2:lite"
-    mensaje = f"""La siguiente consulta SQL ha generado un error.
-    Pregunta original: {pregunta}
-    Error: {error}
-    SQL fallido: {sql_fallido}
-    IMPORTANTE: En MySQL modo estricto todas las columnas del SELECT que no sean agregaciones deben estar en el GROUP BY.
-    IMPORTANTE: La columna producto_nombre NO EXISTE. Usar SIEMPRE descripcion para el nombre del producto.
-    Genera un nuevo SQL correcto para responder la pregunta."""
-    respuesta = ollama.chat(
-        model = modelo,
-        messages = [{
-            "role": "system",
-            "content": instrucciones},
-            {"role": "user",
-             "content": mensaje}]
-         )
-    return respuesta
-
-def generar_respuesta_natural(pregunta, resultado):
-    modelo = "deepseek-coder-v2:lite"
-    respuesta = ollama.chat(
-        model = modelo,
-        messages = [{
-            "role": "system",
-            "content": "Eres un asistente de negocio. Responde ÚNICAMENTE basándote en los datos proporcionados. NO inventes, asumas ni agregues información que no esté en los resultados. Si los datos no contienen algún campo, no lo menciones. "},
-            {"role": "user",
-             "content": f"Pregunta: {pregunta} Resultado de la consulta SQL: {resultado.to_string(index=False)} Genera una respuesta natural y profesional basada en el resultado. Responde SOLO con la informacion de los datos anteriores, sin agregar datos externos"}
-             ]
-         )
-    return respuesta
-
-def sugerencia(pregunta):
-    modelo = "deepseek-coder-v2:lite"
-    respuesta = ollama.chat(
-        model = modelo,
-        messages = [{
-            "role": "system",
-            "content": "Eres un asistente de negocio. Cuando una consulta no puede responderse, sugiere 2-3 preguntas alternativas similares que sí puedan responderse con datos de ventas, productos y departamentos."
-        },  
-            {"role": "user",
-            "content": f"Pregunta original: {pregunta}"}
-            ]
+    """Genera una consulta SQL a partir de una pregunta en lenguaje natural"""
+    return ollama.chat(
+        model=MODELO,
+        messages=[
+            {"role": "system", "content": instrucciones},
+            {"role": "user", "content": pregunta}
+        ]
     )
-    return respuesta
 
-    
-#try: 
-#  resp = generar_sql("Cuales son los cinco productos mas vendidos?")
-#   respuesta_real = resp.message.content
-#   print(respuesta_real)
-#except Exception as e:
-#    print(f"Error al generar la consulta SQL: {e}")
+# ── CORRECCIÓN DE SQL ──────────────────────────────────────────
+def corregir_sql(pregunta, sql_fallido, error):
+    """Reintenta generar SQL correcto usando el error como contexto"""
+    mensaje = f"""La siguiente consulta SQL ha generado un error.
+Pregunta original: {pregunta}
+Error: {error}
+SQL fallido: {sql_fallido}
+IMPORTANTE: En MySQL modo estricto todas las columnas del SELECT que no sean agregaciones deben estar en el GROUP BY.
+IMPORTANTE: La columna producto_nombre NO EXISTE. Usar SIEMPRE descripcion para el nombre del producto.
+Genera un nuevo SQL correcto para responder la pregunta."""
+
+    return ollama.chat(
+        model=MODELO,
+        messages=[
+            {"role": "system", "content": instrucciones},
+            {"role": "user", "content": mensaje}
+        ]
+    )
+
+# ── RESPUESTA EN LENGUAJE NATURAL ──────────────────────────────
+def generar_respuesta_natural(pregunta, resultado):
+    """Genera una respuesta en español basada en los resultados del SQL"""
+    return ollama.chat(
+        model=MODELO,
+        messages=[
+            {
+                "role": "system",
+                "content": "Eres un asistente de negocio. Responde ÚNICAMENTE basándote en los datos proporcionados. NO inventes, asumas ni agregues información que no esté en los resultados. Si los datos no contienen algún campo, no lo menciones."
+            },
+            {
+                "role": "user",
+                "content": f"Pregunta: {pregunta}\nDatos:\n{resultado.to_string(index=False)}\nResponde SOLO con la información de los datos anteriores, sin agregar datos externos."
+            }
+        ]
+    )
+
+# ── SUGERENCIAS ────────────────────────────────────────────────
+def sugerencia(pregunta):
+    """Genera preguntas alternativas cuando una consulta no puede responderse"""
+    return ollama.chat(
+        model=MODELO,
+        messages=[
+            {
+                "role": "system",
+                "content": "Eres un asistente de negocio. Cuando una consulta no puede responderse, sugiere 2-3 preguntas alternativas que SÍ puedan responderse. El sistema SOLO tiene datos de: ventas totales, tickets de venta, productos vendidos, ganancias, cantidades, departamentos y fechas. NO sugieras nada sobre clientes, empleados, proveedores, inventario de entrada o cualquier dato que no sea de ventas. Devuelve ÚNICAMENTE las preguntas separadas por |, sin numeración ni texto adicional. Ejemplo: ¿Cuánto vendí este mes?|¿Cuál es el producto más vendido?|¿Qué departamento genera más ganancia?"
+            },
+            {
+                "role": "user",
+                "content": f"Pregunta original: {pregunta}"
+            }
+        ]
+    )
