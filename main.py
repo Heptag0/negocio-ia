@@ -1,8 +1,9 @@
 import re
 from llm import generar_sql, corregir_sql, generar_respuesta_natural, sugerencia
 from ejecutar_query import ejecutar
+from cache import guardar_cache, cargar_cache
 
-# ── UTILIDADES ─────────────────────────────────────────────────
+# UTILIDADES
 def limpiar_respuesta(respuesta):
     """Limpia la respuesta del modelo eliminando bloques thinking y formato SQL"""
     respuesta = re.sub(r'<think>.*?</think>', '', respuesta, flags=re.DOTALL)
@@ -12,7 +13,7 @@ def limpiar_respuesta(respuesta):
         .replace("%", "%%")
     return respuesta
 
-# ── CONSULTA PRINCIPAL ─────────────────────────────────────────
+# CONSULTA PRINCIPAL
 def consultar(pregunta, modo="rapido"):
     """
     Orquesta el flujo completo de una consulta:
@@ -23,23 +24,28 @@ def consultar(pregunta, modo="rapido"):
     Devuelve: (respuesta_texto, resultado_df, lista_sugerencias)
     """
 
-    # ── GENERACIÓN DE SQL ──────────────────────────────────────
+    # REVISAR CACHÉ 
+    cache = cargar_cache(pregunta)
+    if cache is not None:
+        return cache
+
+    # GENERACIÓN DE SQL
     generar = generar_sql(pregunta)
     respuesta = limpiar_respuesta(generar.message.content)
 
-    # ── DETECTAR RESPUESTA NO SQL ─────────────────────────
+    # DETECCIÓN DE RESPUESTA NO SQL
     if "SELECT" not in respuesta.upper():
         if "esquema actual" in respuesta.lower():
             lista_sugerencias = sugerencia(pregunta).message.content.split("|")
             return "No he podido responder, te recomiendo estas consultas:", None, lista_sugerencias
         return respuesta, None, None
 
-    # ── EJECUCIÓN DEL SQL ──────────────────────────────────────
+    # EJECUCIÓN DEL SQL
     try:
         resultado = ejecutar(respuesta)
 
     except Exception as e:
-        # ── REINTENTO CON AUTOCORRECCIÓN ───────────────────────
+        # REINTENTO CON AUTOCORRECCIÓN
         print(f"ERROR - Reintentando: {e}")
         respuesta_corregida = limpiar_respuesta(
             corregir_sql(pregunta, respuesta, str(e)).message.content
@@ -50,13 +56,15 @@ def consultar(pregunta, modo="rapido"):
             lista_sugerencias = sugerencia(pregunta).message.content.split("|")
             return "No se ha podido responder esta consulta. Intenta reformular la pregunta.", None, lista_sugerencias
 
-    # ── FORMATEO DEL RESULTADO ─────────────────────────────────
+    # FORMATEO DEL RESULTADO 
     resultado = resultado.round(2)
     resultado.columns = resultado.columns.str.replace("_", " ").str.title()
 
-    # ── RESPUESTA SEGÚN MODO ───────────────────────────────────
+    # RESPUESTA SEGÚN MODO
     if modo == "profundo":
         respuesta_natural = generar_respuesta_natural(pregunta, resultado).message.content
+        guardar_cache(pregunta, (respuesta_natural, resultado, None))
         return respuesta_natural, resultado, None
 
+    guardar_cache(pregunta, (None, resultado, None))
     return None, resultado, None

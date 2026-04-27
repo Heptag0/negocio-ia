@@ -1,5 +1,17 @@
 # Changelog
 
+## V2.4.0
+### Nuevas Features
+- Caché de consultas por sesión — consultas repetidas responden instantáneamente
+- Archivo cache.py con funciones guardar_cache y cargar_cache
+- Solo se cachean resultados exitosos, no errores ni sugerencias
+
+### Archivos nuevos
+- cache.py
+
+### Archivos modificados
+- main.py
+
 ## V2.3.0
 ### Nuevas Features
 - Sugerencias clickeables que ejecutan la consulta automáticamente

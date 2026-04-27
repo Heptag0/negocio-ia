@@ -2,11 +2,11 @@ import ollama
 from schema import obtener_schema
 from prompt import obtener_prompt
 
-# ── CONFIGURACIÓN ──────────────────────────────────────────────
+# CONFIGURACIÓN 
 MODELO = "deepseek-coder-v2:lite"
 instrucciones = obtener_prompt() + obtener_schema()
 
-# ── GENERACIÓN DE SQL ──────────────────────────────────────────
+# GENERACIÓN DE SQL 
 def generar_sql(pregunta):
     """Genera una consulta SQL a partir de una pregunta en lenguaje natural"""
     return ollama.chat(
@@ -17,7 +17,7 @@ def generar_sql(pregunta):
         ]
     )
 
-# ── CORRECCIÓN DE SQL ──────────────────────────────────────────
+# CORRECCIÓN DE SQL 
 def corregir_sql(pregunta, sql_fallido, error):
     """Reintenta generar SQL correcto usando el error como contexto"""
     mensaje = f"""La siguiente consulta SQL ha generado un error.
@@ -36,7 +36,7 @@ Genera un nuevo SQL correcto para responder la pregunta."""
         ]
     )
 
-# ── RESPUESTA EN LENGUAJE NATURAL ──────────────────────────────
+# RESPUESTA EN LENGUAJE NATURAL
 def generar_respuesta_natural(pregunta, resultado):
     """Genera una respuesta en español basada en los resultados del SQL"""
     return ollama.chat(
@@ -53,7 +53,7 @@ def generar_respuesta_natural(pregunta, resultado):
         ]
     )
 
-# ── SUGERENCIAS ────────────────────────────────────────────────
+# SUGERENCIAS
 def sugerencia(pregunta):
     """Genera preguntas alternativas cuando una consulta no puede responderse"""
     return ollama.chat(

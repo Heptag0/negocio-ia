@@ -2,7 +2,7 @@ import streamlit as st
 from main import consultar
 from graficos import detectar_grafico, generar_grafico
 
-# ── MEMORIA DE SESIÓN ──────────────────────────────────────────
+# MEMORIA DE SESIÓN 
 # Inicializar variables que necesitan mantenerse en recargas
 if "pregunta" not in st.session_state:
     st.session_state.pregunta = ""
@@ -11,12 +11,21 @@ if "ejecutar" not in st.session_state:
 if "lista_sugerencias" not in st.session_state:
     st.session_state.lista_sugerencias = None
 
-# ── INTERFAZ ───────────────────────────────────────────────────
+# MEMORIA DE SESIÓN 
+# Inicializar variables que necesitan mantenerse en recargas
+if "pregunta" not in st.session_state:
+    st.session_state.pregunta = ""
+if "ejecutar" not in st.session_state:
+    st.session_state.ejecutar = False
+if "lista_sugerencias" not in st.session_state:
+    st.session_state.lista_sugerencias = None
+
+# INTERFAZ
 st.title("Consulta de Ventas")
 pregunta = st.text_input("Ingrese su pregunta sobre tus ventas", 
                           value=st.session_state.pregunta)
 
-# ── EJECUCIÓN AUTOMÁTICA (click en una sugerencia) ──
+# EJECUCIÓN AUTOMÁTICA (click en una sugerencia)
 if st.session_state.ejecutar:
     st.session_state.ejecutar = False  # resetear para no ejecutar en bucle
     pregunta = st.session_state.pregunta
@@ -35,14 +44,14 @@ if st.session_state.ejecutar:
         except Exception as e:
             st.write(f"No se ha podido realizar la consulta, error: {e}")
 
-# ── BOTONES PRINCIPALES ────────────────────────────────────────
+# BOTONES PRINCIPALES
 col1, col2 = st.columns([1, 1])
 with col1:
     rapida = st.button("⚡ Rápida")
 with col2:
     profunda = st.button("🔍 Profunda")
 
-# ── BLOQUE RESPUESTA PROFUNDA ──────────────────────────────────
+# BLOQUE RESPUESTA PROFUNDA
 if profunda:
     st.session_state.lista_sugerencias = None  # limpiar sugerencias anteriores
     with st.spinner("Analizando tu consulta..."):
@@ -60,7 +69,7 @@ if profunda:
         except Exception as e:
             st.write(f"No se ha podido realizar la consulta, error: {e}")
 
-# ── BLOQUE RESPUESTA RÁPIDA ────────────────────────────────────
+# BLOQUE RESPUESTA RÁPIDA 
 if rapida:
     st.session_state.lista_sugerencias = None  # limpiar sugerencias anteriores
     with st.spinner("Analizando tu consulta..."):
@@ -78,7 +87,7 @@ if rapida:
         except Exception as e:
             st.write(f"No se ha podido realizar la consulta, error: {e}")
 
-# ── BOTONES DE SUGERENCIAS ─────────────────────────────────────
+# BOTONES DE SUGERENCIAS 
 # Siempre visibles si hay sugerencias guardadas en la sesion
 if st.session_state.lista_sugerencias:
     st.write("Preguntas recomendadas:")
@@ -88,6 +97,6 @@ if st.session_state.lista_sugerencias:
             st.session_state.ejecutar = True
             st.rerun()
 
-# ── MENSAJE INICIAL ────────────────────────────────────────────
+# MENSAJE INICIAL 
 if not rapida and not profunda and not st.session_state.ejecutar:
     st.write("Ingrese una pregunta y presione el botón para obtener una respuesta")

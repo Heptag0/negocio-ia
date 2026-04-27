@@ -1,7 +1,7 @@
 import pandas as pd
 import plotly.express as px
 
-# ── CONFIGURACIÓN ──────────────────────────────────────────────
+# CONFIGURACIÓN
 PALABRAS_FECHA = ["fecha", "mes", "año", "dia", "semana", "trimestre", "periodo"]
 
 ORDEN_MESES = [
@@ -9,7 +9,7 @@ ORDEN_MESES = [
     "July", "August", "September", "October", "November", "December"
 ]
 
-# ── DETECCIÓN DE TIPO DE GRÁFICO ───────────────────────────────
+#  DETECCIÓN DE TIPO DE GRÁFICO
 def detectar_grafico(df):
     """
     Analiza el DataFrame y decide qué tipo de gráfico es más apropiado:
@@ -38,7 +38,7 @@ def detectar_grafico(df):
     else:
         return "barras"
 
-# ── GENERACIÓN DE GRÁFICO ──────────────────────────────────────
+#  GENERACIÓN DE GRÁFICO
 def generar_grafico(df, tipo):
     """Genera el gráfico Plotly correspondiente según el tipo detectado"""
 
