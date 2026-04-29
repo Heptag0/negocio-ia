@@ -1,13 +1,8 @@
-[English](#yvexiq---english) | [Español](#espanol)
-
-[Español](#yvexiq----español)
-[Español](#yvexiq--español)
-
-[Español](#yvexiq)
+[English](#yvexiq---english) | [Español](#yvexiq---espanol)
 
 ---
 
-# YvexIQ — English
+# YvexIQ - English
 
 ### Intelligent business queries powered by AI
 
@@ -97,7 +92,7 @@ streamlit run app.py
 
 ---
 
-# YvexIQ — Español
+# YvexIQ - Espanol
 
 ### Consultas inteligentes para tu negocio impulsadas por IA
 
