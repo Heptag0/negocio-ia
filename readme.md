@@ -1,4 +1,4 @@
-[🇺🇸 English](#yvexiq---english) | [Español](#yvexiq---español)
+[English](#yvexiq---english) | [Español](#yvexiq---espa%C3%B1ol)
 
 ---
 
