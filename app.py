@@ -1,4 +1,5 @@
 import streamlit as st
+import time
 from main import consultar
 from graficos import detectar_grafico, generar_grafico
 with open("styles.css") as f:
@@ -32,26 +33,31 @@ if st.session_state.primera_vez:
     """, unsafe_allow_html=True)
 pregunta = st.text_input("Ingrese su consulta aqui:",
                         placeholder="Ej: ¿Cuál es mi mejor día de ventas?",
+                        max_chars=200,
                         value=st.session_state.pregunta)
 
 
 # EJECUCIÓN AUTOMÁTICA (click en una sugerencia)
 if st.session_state.ejecutar:
-    st.session_state.ejecutar = False  # resetear para no ejecutar en bucle
+    st.session_state.ejecutar = False
     pregunta = st.session_state.pregunta
     st.session_state.primera_vez = False
+    inicio = time.time()
     with st.spinner("Analizando tu consulta..."):
         try:
             respuesta_texto, resultado, lista_sugerencias = consultar(pregunta, modo="rapido")
             st.session_state.lista_sugerencias = lista_sugerencias
             if respuesta_texto is not None:
-                st.write(respuesta_texto)
+                st.markdown(f'<div class="mensaje-info">{respuesta_texto}</div>', unsafe_allow_html=True)
             if resultado is not None:
                 st.dataframe(resultado.reset_index(drop=True), hide_index=True)
                 if resultado.shape[0] > 0 and resultado.shape[1] >= 2:
                     tipo_grafico = detectar_grafico(resultado)
                     grafico = generar_grafico(resultado, tipo_grafico)
                     st.plotly_chart(grafico)
+            fin = time.time()
+            tiempo = round(fin - inicio, 2)
+            st.caption(f"⏱ Consulta completada en {tiempo} segundos")
         except Exception as e:
             st.write(f"No se ha podido realizar la consulta, error: {e}")
 
@@ -70,18 +76,22 @@ with col2:
 if profunda:
     st.session_state.lista_sugerencias = None  # limpiar sugerencias anteriores
     st.session_state.primera_vez = False
+    inicio = time.time()
     with st.spinner("Analizando tu consulta..."):
         try:
             respuesta_natural, resultado, lista_sugerencias = consultar(pregunta, modo="profundo")
             st.session_state.lista_sugerencias = lista_sugerencias
             if respuesta_natural is not None:
-                st.write(respuesta_natural)
+                st.markdown(f'<div class="mensaje-info">{respuesta_natural}</div>', unsafe_allow_html=True)
             if resultado is not None:
                 st.dataframe(resultado.reset_index(drop=True), hide_index=True)
                 if resultado.shape[0] > 0 and resultado.shape[1] >= 2:
                     tipo_grafico = detectar_grafico(resultado)
                     grafico = generar_grafico(resultado, tipo_grafico)
                     st.plotly_chart(grafico)
+            fin = time.time()
+            tiempo = round(fin - inicio, 2)
+            st.caption(f"⏱ Consulta completada en {tiempo} segundos")
         except Exception as e:
             st.write(f"No se ha podido realizar la consulta, error: {e}")
 
@@ -89,18 +99,22 @@ if profunda:
 if rapida:
     st.session_state.lista_sugerencias = None  # limpiar sugerencias anteriores
     st.session_state.primera_vez = False
+    inicio = time.time()
     with st.spinner("Analizando tu consulta..."):
         try:
             respuesta_texto, resultado, lista_sugerencias = consultar(pregunta, modo="rapido")
             st.session_state.lista_sugerencias = lista_sugerencias
             if respuesta_texto is not None:
-                st.write(respuesta_texto)
+                st.markdown(f'<div class="mensaje-info">{respuesta_texto}</div>', unsafe_allow_html=True)
             if resultado is not None:
                 st.dataframe(resultado.reset_index(drop=True), hide_index=True)
                 if resultado.shape[0] > 0 and resultado.shape[1] >= 2:
                     tipo_grafico = detectar_grafico(resultado)
                     grafico = generar_grafico(resultado, tipo_grafico)
                     st.plotly_chart(grafico)
+            fin = time.time()
+            tiempo = round(fin - inicio, 2)
+            st.caption(f"⏱ Consulta completada en {tiempo} segundos")
         except Exception as e:
             st.write(f"No se ha podido realizar la consulta, error: {e}")
 
