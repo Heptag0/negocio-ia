@@ -1,5 +1,27 @@
 # Changelog
 
+## V2.8.0
+
+### Nuevas Features
+- generate_demo_db.py — generación de base de datos demo con Faker
+- clean_db.py — pipeline ETL con limpieza automática de datos
+- generar_schema.py — generación dinámica de schema.py
+- Base de datos demo de tienda de ropa con datos internacionales
+
+### Mejoras
+- Prompt optimizado y universalizado — sin referencias a tablas específicas
+- Regla 6 reforzada — GROUP BY estricto con JOINs
+- Regla 8 reforzada — MONTHNAME() obligatorio, nunca MONTH()
+- Detección automática de columnas basura, fechas y tipos de dato
+
+### Archivos nuevos
+- generate_demo_db.py
+- clean_db.py
+- generar_schema.py
+
+### Archivos modificados
+- prompt.py, schema.py
+
 ## V2.7.0
 ### Nuevas Features
 - Tiempo de respuesta visible al final de cada consulta
