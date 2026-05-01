@@ -1,5 +1,21 @@
 # Changelog
 
+## V2.8.1
+### Nuevas Features
+- Tests unitarios con pytest
+- test_main.py — test de limpiar_respuesta()
+- test_graficos.py — tests de detectar_grafico() para barras, línea y pastel
+- test_clean_db.py — tests de es_columna_basura() para las 3 reglas
+- Fix en limpiar_respuesta() — strip() al final para eliminar espacios extra
+
+### Archivos nuevos
+- test/test_main.py
+- test/test_graficos.py
+- test/test_clean_db.py
+
+### Archivos modificados
+- main.py
+
 ## V2.8.0
 
 ### Nuevas Features
