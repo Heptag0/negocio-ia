@@ -10,7 +10,8 @@ def limpiar_respuesta(respuesta):
     respuesta = respuesta.strip()\
         .replace("```sql", "").replace("```", "")\
         .replace("'", "'").replace("'", "'")\
-        .replace("%", "%%")
+        .replace("%", "%%")\
+        .strip()
     return respuesta
 
 # CONSULTA PRINCIPAL
