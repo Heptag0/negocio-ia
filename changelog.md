@@ -1,5 +1,17 @@
 # Changelog
 
+## V2.8.2
+### Nuevas Features
+- Notebook de análisis completo (analisis_demo.ipynb)
+- Análisis descriptivo — ventas, productos, clientes, canales, devoluciones
+- Análisis explicativo — patrones estacionales, precio vs devoluciones, días de semana
+- Machine Learning — Random Forest con GridSearch, 98% recall en predicción de devoluciones
+- regenerar_devoluciones.py — script para actualizar solo la tabla de devoluciones
+
+### Archivos nuevos
+- analisis_demo.ipynb
+- regenerar_devoluciones.py
+
 ## V2.8.1
 ### Nuevas Features
 - Tests unitarios con pytest

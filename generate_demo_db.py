@@ -4,6 +4,7 @@ from faker import Faker
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 import os
+from db_connector import conectar
 
 # CONFIGURACIÓN
 load_dotenv()
@@ -339,22 +340,34 @@ def generar_descuentos(cursor, ticket_ids):
     print(f"✅ {len(tickets_con_descuento)} descuentos generados")
 
 
-def generar_devoluciones(cursor, ticket_ids):
+def generar_devoluciones(cursor, ticket_ids, productos_df):
     motivos = ["Talla incorrecta", "Defecto", "No convence", "Color diferente", "Regalo duplicado"]
     tickets_con_devolucion = random.sample(ticket_ids, int(len(ticket_ids) * 0.05))
     
     for ticket_id in tickets_con_devolucion:
+        producto_id = random.randint(1, 400)
+        producto = productos_df[productos_df['id'] == producto_id]
+        talla = producto['talla'].values[0]
+        precio = producto['precio_venta'].values[0]
+        
+        if talla in ['XS', 'XXL']:
+            motivo = random.choice(['Talla incorrecta', 'Talla incorrecta', 'Talla incorrecta', 'Defecto', 'No convence'])
+        elif precio > 100:
+            motivo = random.choice(['No convence', 'Color diferente', 'Defecto'])
+        else:
+            motivo = random.choice(motivos)
+        
         cursor.execute("""
             INSERT INTO devoluciones (ticket_id, producto_id, cantidad, fecha, motivo)
             VALUES (%s, %s, %s, %s, %s)
         """, (
             ticket_id,
-            random.randint(1, 400),
+            producto_id,
             random.randint(1, 3),
             fake.date_between(start_date="-3y", end_date="today"),
-            random.choice(motivos) if random.random() > 0.1 else None
+            motivo if random.random() > 0.1 else None
         ))
-    print(f"✅ {len(tickets_con_devolucion)} devoluciones generadas")
+    print(f"{len(tickets_con_devolucion)} devoluciones generadas")
 
 
 def generar_movimientos(cursor, n=1000):
@@ -415,7 +428,9 @@ def main():
         generar_descuentos(cursor, ticket_ids)
         conn.commit()
         
-        generar_devoluciones(cursor, ticket_ids)
+        engine = conectar()
+        productos_df = pd.read_sql("SELECT id, talla, precio_venta FROM productos", engine)
+        generar_devoluciones(cursor, ticket_ids, productos_df)
         conn.commit()
         
         generar_movimientos(cursor)
